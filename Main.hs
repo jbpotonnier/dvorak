@@ -1,6 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module Dvorak where
+module Main where
 
 import System.Environment (getArgs)
 import Control.Applicative ((<$>))
