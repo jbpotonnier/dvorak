@@ -5,8 +5,7 @@ module Dvorak where
 import System.Environment (getArgs)
 import Control.Applicative ((<$>))
 import Control.Arrow ((&&&))
-import Data.List (sortBy)
-import Data.Ord (comparing)
+import Data.List (sort)
 import qualified Data.ByteString.Lazy as LBS
 import qualified Data.Text.Lazy as LT
 import qualified Data.ByteString.Lazy.Char8 as C
@@ -27,7 +26,7 @@ score row word = count / (toRational. LT.length $ word)
     count = toRational . LT.length . LT.filter (\ c -> (LT.singleton c) `LT.isInfixOf` row) $ word
 
 takeBestWords :: Dict -> Int -> Row -> [Word]
-takeBestWords dict nb row = take nb . map fst . sortBy (comparing $ negate . snd) . map (id &&& score row) $ dict
+takeBestWords dict nb row = take nb . map snd . sort . map (negate . score row &&& id) $ dict
 
 randomWords :: Dict -> Int -> Int ->  Row -> IO [Word]
 randomWords dict nbKeep nbBest row = 
