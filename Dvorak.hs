@@ -6,11 +6,11 @@ import System.Environment (getArgs)
 import Control.Applicative ((<$>))
 import Control.Arrow ((&&&))
 import Data.List (sort)
-import qualified Data.ByteString.Lazy as LBS
-import qualified Data.Text.Lazy as LT
-import qualified Data.ByteString.Lazy.Char8 as C
-import Data.Text.Lazy (Text)
-import Data.Text.Lazy.Encoding (decodeLatin1, encodeUtf8)
+import qualified Data.ByteString as BS
+import qualified Data.Text as T
+import qualified Data.ByteString.Char8 as C
+import Data.Text (Text)
+import Data.Text.Encoding (decodeLatin1, encodeUtf8)
 import System.Random.Shuffle (shuffleM)
 
 type Word = Text
@@ -21,9 +21,9 @@ rows :: [Keys]
 rows = ["aoeudhtns", "pyfgcrl", "qjkxbmwvz", "àâoôéèêëûüiïç"]
 
 score :: Keys -> Word -> Rational
-score row word = count / (toRational . LT.length $ word)
+score row word = count / (toRational . T.length $ word)
   where
-    count = toRational . LT.length . LT.filter (\ c -> LT.singleton c `LT.isInfixOf` row) $ word
+    count = toRational . T.length . T.filter (\ c -> T.singleton c `T.isInfixOf` row) $ word
 
 takeBestWords :: Dict -> Int -> Keys -> [Word]
 takeBestWords dict nb row = take nb . 
@@ -38,11 +38,11 @@ randomWords dict nbKeep nbBest row =
     bestWords = takeBestWords dict nbBest row 
 
 keys :: [Int] -> Keys
-keys = LT.concat . map (rows !!)
+keys = T.concat . map (rows !!)
 
 main :: IO ()
 main = do
   dictfile:nbwords:indices <- getArgs
-  dict <- LT.lines . decodeLatin1 <$> LBS.readFile dictfile
+  dict <- T.lines . decodeLatin1 <$> BS.readFile dictfile
   rowSet <- randomWords dict (read nbwords) 400 (keys (map read indices))
-  C.putStrLn $ encodeUtf8 . LT.unwords $ rowSet
+  C.putStrLn $ encodeUtf8 . T.unwords $ rowSet
