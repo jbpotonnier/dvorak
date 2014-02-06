@@ -18,7 +18,7 @@ type Keys = Text
 type Dict = [Text]
 
 rows :: [Keys]
-rows = ["àâaoôeéèêëuûüiïdhtns", "pyfgcçrl", "qjkxbmwvz"]
+rows = ["aoeudhtns", "pyfgcrl", "qjkxbmwvz", "àâoôéèêëûüiïç"]
 
 score :: Keys -> Word -> Rational
 score row word = count / (toRational . LT.length $ word)
