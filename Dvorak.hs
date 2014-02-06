@@ -39,5 +39,5 @@ main :: IO ()
 main = do
   [dictfile, nbwords, row] <- getArgs
   dict <- LT.lines . decodeLatin1 <$> LBS.readFile dictfile
-  homerowWords <- randomWords dict (read nbwords) 400 (rows !! (read row))
-  C.putStrLn $ encodeUtf8 . LT.unwords $ homerowWords
+  rowWords <- randomWords dict (read nbwords) 400 (rows !! (read row))
+  C.putStrLn $ encodeUtf8 . LT.unwords $ rowWords
