@@ -23,7 +23,7 @@ rows = ["aoeudhtns", "pyfgcrl", "qjkxbmwvz", "àâoôéèêëûüiïç"]
 score :: Keys -> Word -> Rational
 score row word = count / (toRational . LT.length $ word)
   where
-    count = toRational . LT.length . LT.filter (\ c -> (LT.singleton c) `LT.isInfixOf` row) $ word
+    count = toRational . LT.length . LT.filter (\ c -> LT.singleton c `LT.isInfixOf` row) $ word
 
 takeBestWords :: Dict -> Int -> Keys -> [Word]
 takeBestWords dict nb row = take nb . 
@@ -44,5 +44,5 @@ main :: IO ()
 main = do
   dictfile:nbwords:indices <- getArgs
   dict <- LT.lines . decodeLatin1 <$> LBS.readFile dictfile
-  rowWords <- randomWords dict (read nbwords) 400 (keys (map read indices))
-  C.putStrLn $ encodeUtf8 . LT.unwords $ rowWords
+  rowSet <- randomWords dict (read nbwords) 400 (keys (map read indices))
+  C.putStrLn $ encodeUtf8 . LT.unwords $ rowSet
