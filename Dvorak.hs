@@ -14,29 +14,32 @@ import Data.Text.Lazy.Encoding (decodeLatin1, encodeUtf8)
 import System.Random.Shuffle (shuffleM)
 
 type Word = Text
-type Row = Text
+type Keys = Text
 type Dict = [Text]
 
-rows :: [Row]
+rows :: [Keys]
 rows = ["àâaoôeéèêëuûüiïdhtns", "pyfgcçrl", "qjkxbmwvz"]
 
-score :: Row -> Word -> Rational
-score row word = count / (toRational. LT.length $ word)
+score :: Keys -> Word -> Rational
+score row word = count / (toRational . LT.length $ word)
   where
     count = toRational . LT.length . LT.filter (\ c -> (LT.singleton c) `LT.isInfixOf` row) $ word
 
-takeBestWords :: Dict -> Int -> Row -> [Word]
+takeBestWords :: Dict -> Int -> Keys -> [Word]
 takeBestWords dict nb row = take nb . map snd . sort . map (negate . score row &&& id) $ dict
 
-randomWords :: Dict -> Int -> Int ->  Row -> IO [Word]
-randomWords dict nbKeep nbBest row = 
+randomWords :: Dict -> Int -> Int -> Keys -> IO [Word]
+randomWords dict nbKeep nbBest row =
   take nbKeep <$> shuffleM bestWords
   where
     bestWords = takeBestWords dict nbBest row 
 
+keys :: [Int] -> Keys
+keys = LT.concat . map (rows !!)
+
 main :: IO ()
 main = do
-  [dictfile, nbwords, row] <- getArgs
+  dictfile:nbwords:indices <- getArgs
   dict <- LT.lines . decodeLatin1 <$> LBS.readFile dictfile
-  rowWords <- randomWords dict (read nbwords) 400 (rows !! (read row))
+  rowWords <- randomWords dict (read nbwords) 400 (keys (map read indices))
   C.putStrLn $ encodeUtf8 . LT.unwords $ rowWords
