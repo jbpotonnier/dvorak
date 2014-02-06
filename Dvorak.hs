@@ -26,7 +26,10 @@ score row word = count / (toRational . LT.length $ word)
     count = toRational . LT.length . LT.filter (\ c -> (LT.singleton c) `LT.isInfixOf` row) $ word
 
 takeBestWords :: Dict -> Int -> Keys -> [Word]
-takeBestWords dict nb row = take nb . map snd . sort . map (negate . score row &&& id) $ dict
+takeBestWords dict nb row = take nb . 
+                            map snd . 
+                            sort . 
+                            map (negate . score row &&& id) $ dict
 
 randomWords :: Dict -> Int -> Int -> Keys -> IO [Word]
 randomWords dict nbKeep nbBest row =
